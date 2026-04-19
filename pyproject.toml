@@ -1,0 +1,7 @@
+[project]
+name = "asil-forge"
+version = "0.1.0"
+description = "Asil Forge software company platform for Vercel deployment."
+readme = "README.md"
+requires-python = "~=3.12.0"
+dependencies = []
