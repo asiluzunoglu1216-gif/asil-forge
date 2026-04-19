@@ -77,6 +77,7 @@ EMAIL_RE = re.compile(r"^[^@\s]+@[^@\s]+\.[^@\s]+$")
 RATE_LIMITS: dict[tuple[str, str], list[float]] = {}
 ADMIN_EMAIL = os.environ.get("ASIL_FORGE_ADMIN_EMAIL", "admin@asilforge.local").strip()
 ADMIN_PASSWORD = os.environ.get("ASIL_FORGE_ADMIN_PASSWORD", "").strip()
+PUBLIC_ROUTES = ["/", "/about", "/services", "/showcase", "/contact"]
 
 
 def now_utc() -> datetime:
@@ -379,6 +380,54 @@ def public_stats(conn: sqlite3.Connection) -> dict[str, int]:
     return {"users": users, "projects": projects, "messages": messages}
 
 
+def meta_description_for(path: str, lang: str) -> str:
+    descriptions = {
+        "/": {
+            "tr": "Asil Forge; premium yazilim gelistirme, otomasyon sistemleri, web platformlari ve admin panelleri sunan modern bir yazilim sirketidir.",
+            "en": "Asil Forge is a premium software company focused on automation systems, web platforms, and modern digital operations.",
+        },
+        "/about": {
+            "tr": "Asil Forge hakkinda: dijital omurga, admin sistemleri ve kurumsal yazilim deneyimi.",
+            "en": "About Asil Forge: digital backbone, admin systems, and a structured software company experience.",
+        },
+        "/services": {
+            "tr": "Kurumsal web platformlari, musteri panelleri, admin ekranlari ve otomasyon sistemleri.",
+            "en": "Corporate web platforms, client dashboards, admin tools, and automation systems.",
+        },
+        "/showcase": {
+            "tr": "Asil Forge proje vitrini: Asil Ofisi, ClientOps Workspace ve digital product case study alanlari.",
+            "en": "Asil Forge showcase: Asil Office, ClientOps Workspace, and digital product case studies.",
+        },
+        "/contact": {
+            "tr": "Asil Forge ile iletisime gecin ve yazilim projeniz icin yapilandirilmis talep olusturun.",
+            "en": "Contact Asil Forge and start a structured request for your software project.",
+        },
+    }
+    lang_map = descriptions.get(path, descriptions["/"])
+    return lang_map.get(lang, lang_map["en"])
+
+
+def sitemap_xml() -> str:
+    pages = "\n".join(
+        f"  <url><loc>{BASE_URL.rstrip('/')}{path}</loc></url>"
+        for path in PUBLIC_ROUTES
+    )
+    return (
+        '<?xml version="1.0" encoding="UTF-8"?>\n'
+        '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n'
+        f"{pages}\n"
+        "</urlset>"
+    )
+
+
+def robots_txt() -> str:
+    return (
+        "User-agent: *\n"
+        "Allow: /\n\n"
+        f"Sitemap: {BASE_URL.rstrip('/')}/sitemap.xml\n"
+    )
+
+
 def admin_stats(conn: sqlite3.Connection) -> dict[str, int]:
     stats = public_stats(conn)
     notifications = conn.execute("SELECT COUNT(*) AS count FROM notifications").fetchone()["count"]
@@ -505,6 +554,12 @@ class AsilForgeHandler(BaseHTTPRequestHandler):
             self.db.close()
 
     def handle_get(self) -> None:
+        if self.route_path == "/robots.txt":
+            self.send_bytes(robots_txt().encode("utf-8"), content_type="text/plain; charset=utf-8")
+            return
+        if self.route_path == "/sitemap.xml":
+            self.send_bytes(sitemap_xml().encode("utf-8"), content_type="application/xml; charset=utf-8")
+            return
         if self.route_path == "/":
             self.render_page("Asil Forge", render_home(self.lang, self.user, public_stats(self.db)), "/")
             return
@@ -899,7 +954,17 @@ class AsilForgeHandler(BaseHTTPRequestHandler):
         return {"message": unquote_plus(message), "level": self.query.get("lvl", "info")}
 
     def render_page(self, title: str, body: str, current_path: str, section_nav: str = "") -> None:
-        html = shell_layout(title=title, body=body, lang=self.lang, current_path=current_path, user=self.user, flash=self.flash_from_query(), section_nav=section_nav)
+        html = shell_layout(
+            title=title,
+            body=body,
+            lang=self.lang,
+            base_url=BASE_URL,
+            current_path=current_path,
+            user=self.user,
+            meta_description=meta_description_for(current_path, self.lang),
+            flash=self.flash_from_query(),
+            section_nav=section_nav,
+        )
         html = apply_csrf(html, self.csrf_token)
         self.send_html(html)
 

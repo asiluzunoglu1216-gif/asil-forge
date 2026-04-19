@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import json
 from html import escape
 from urllib.parse import urlencode
 
@@ -51,8 +52,10 @@ def shell_layout(
     title: str,
     body: str,
     lang: str,
+    base_url: str,
     current_path: str,
     user: dict | None,
+    meta_description: str = "",
     flash: dict[str, str] | None = None,
     section_nav: str = "",
 ) -> str:
@@ -79,14 +82,37 @@ def shell_layout(
         f'<a href="/contact"{" class=\"active\"" if current_path == "/contact" else ""}>{e(t(lang, "nav_contact"))}</a>'
     )
 
+    canonical_url = f"{base_url.rstrip('/')}{current_path}"
+    description = meta_description or "Asil Forge builds premium software systems, automation flows, and digital platforms for modern companies."
+    org_json = json.dumps(
+        {
+            "@context": "https://schema.org",
+            "@type": "Organization",
+            "name": "Asil Forge",
+            "url": base_url.rstrip("/"),
+            "logo": f"{base_url.rstrip('/')}/static/logo-mark.svg",
+        }
+    )
+
     return f"""<!DOCTYPE html>
 <html lang="{e(lang)}">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>{e(title)} | Asil Forge</title>
+  <meta name="description" content="{e(description)}">
+  <meta property="og:title" content="{e(title)} | Asil Forge">
+  <meta property="og:description" content="{e(description)}">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="{e(canonical_url)}">
+  <meta property="og:image" content="{e(base_url.rstrip('/'))}/static/logo-mark.svg">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="{e(title)} | Asil Forge">
+  <meta name="twitter:description" content="{e(description)}">
+  <link rel="canonical" href="{e(canonical_url)}">
   <link rel="icon" type="image/svg+xml" href="/static/logo-mark.svg">
   <link rel="stylesheet" href="/static/styles.css">
+  <script type="application/ld+json">{org_json}</script>
 </head>
 <body>
   <div class="app-shell">
