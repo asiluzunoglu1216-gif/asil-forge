@@ -58,6 +58,33 @@ Render ortam degiskenleri:
 - `AF_SECRET_KEY`
 - `AF_BASE_URL`
 
+## Vercel Yayini
+
+Vercel icin repo artik `api/index.py` ve `vercel.json` ile function tabanli calisacak sekilde hazirlandi.
+
+Vercel proje ayarlari:
+
+- Framework Preset: `Other` veya `Python`
+- Root Directory: `./`
+- Install Command: `pip install -r requirements.txt`
+- Build Command: bos birak
+- Output Directory: bos birak
+
+Vercel Environment Variables:
+
+- `ASIL_FORGE_ADMIN_EMAIL`
+- `ASIL_FORGE_ADMIN_PASSWORD`
+- `AF_SECRET_KEY`
+- `AF_BASE_URL`
+
+Ornek `AF_BASE_URL`:
+
+```env
+AF_BASE_URL=https://asil-forge.vercel.app
+```
+
+Not: Vercel ortami kalici yerel SQLite depolamasi icin uygun degildir. Bu repo Vercel'de demo / hafif kullanim icin gecici `/tmp` veritabani ile acilir. Gercek uretim kullaniminda harici bir veritabani kullanilmalidir.
+
 ## Dosya Yapisi
 
 - `app.py`: server, auth, routes, db logic

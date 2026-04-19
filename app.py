@@ -44,7 +44,6 @@ from rendering import (
 BASE_DIR = Path(__file__).resolve().parent
 STATIC_DIR = BASE_DIR / "static"
 DATA_DIR = BASE_DIR / "data"
-DB_PATH = DATA_DIR / "asil_forge.db"
 ENV_FILE = BASE_DIR / ".env.local"
 SESSION_COOKIE = "af_session"
 CSRF_COOKIE = "af_csrf"
@@ -67,9 +66,12 @@ def load_env_file(file_path: Path) -> None:
 
 load_env_file(ENV_FILE)
 
+IS_VERCEL = bool(os.environ.get("VERCEL"))
+DB_DIR = Path("/tmp") if IS_VERCEL else DATA_DIR
+DB_PATH = DB_DIR / "asil_forge.db"
 HOST = os.environ.get("HOST", "0.0.0.0").strip() or "0.0.0.0"
 PORT = int(os.environ.get("PORT", "8000"))
-BASE_URL = os.environ.get("AF_BASE_URL", f"http://127.0.0.1:{PORT}")
+BASE_URL = os.environ.get("AF_BASE_URL") or (f"https://{os.environ['VERCEL_URL']}" if os.environ.get("VERCEL_URL") else f"http://127.0.0.1:{PORT}")
 SECRET_KEY = os.environ.get("AF_SECRET_KEY", "asil-forge-local-secret-key").encode("utf-8")
 EMAIL_RE = re.compile(r"^[^@\s]+@[^@\s]+\.[^@\s]+$")
 RATE_LIMITS: dict[tuple[str, str], list[float]] = {}
@@ -90,7 +92,7 @@ def dt_from_iso(value: str) -> datetime:
 
 
 def ensure_directories() -> None:
-    DATA_DIR.mkdir(parents=True, exist_ok=True)
+    DB_DIR.mkdir(parents=True, exist_ok=True)
     STATIC_DIR.mkdir(parents=True, exist_ok=True)
 
 
