@@ -1,0 +1,8 @@
+services:
+  - type: web
+    name: asil-forge
+    runtime: python
+    plan: free
+    buildCommand: pip install -r requirements.txt
+    startCommand: python app.py
+    autoDeploy: true

@@ -38,6 +38,26 @@ Sonra tarayicida su adresi ac:
 
 `http://127.0.0.1:8000`
 
+## Render Yayini
+
+Render uzerinde yayinlamak icin bu repo dogrudan kullanilabilir.
+
+Onerilen ayarlar:
+
+- Service Type: `Web Service`
+- Runtime: `Python`
+- Build Command: `pip install -r requirements.txt`
+- Start Command: `python app.py`
+
+Render ortami icin uygulama artik otomatik olarak `0.0.0.0:$PORT` uzerinden acilir.
+
+Render ortam degiskenleri:
+
+- `ASIL_FORGE_ADMIN_EMAIL`
+- `ASIL_FORGE_ADMIN_PASSWORD`
+- `AF_SECRET_KEY`
+- `AF_BASE_URL`
+
 ## Dosya Yapisi
 
 - `app.py`: server, auth, routes, db logic

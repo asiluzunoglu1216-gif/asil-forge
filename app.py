@@ -46,15 +46,9 @@ STATIC_DIR = BASE_DIR / "static"
 DATA_DIR = BASE_DIR / "data"
 DB_PATH = DATA_DIR / "asil_forge.db"
 ENV_FILE = BASE_DIR / ".env.local"
-HOST = "127.0.0.1"
-PORT = 8000
-BASE_URL = os.environ.get("AF_BASE_URL", f"http://{HOST}:{PORT}")
 SESSION_COOKIE = "af_session"
 CSRF_COOKIE = "af_csrf"
 LANG_COOKIE = "af_lang"
-SECRET_KEY = os.environ.get("AF_SECRET_KEY", "asil-forge-local-secret-key").encode("utf-8")
-EMAIL_RE = re.compile(r"^[^@\s]+@[^@\s]+\.[^@\s]+$")
-RATE_LIMITS: dict[tuple[str, str], list[float]] = {}
 
 
 def load_env_file(file_path: Path) -> None:
@@ -73,6 +67,12 @@ def load_env_file(file_path: Path) -> None:
 
 load_env_file(ENV_FILE)
 
+HOST = os.environ.get("HOST", "0.0.0.0").strip() or "0.0.0.0"
+PORT = int(os.environ.get("PORT", "8000"))
+BASE_URL = os.environ.get("AF_BASE_URL", f"http://127.0.0.1:{PORT}")
+SECRET_KEY = os.environ.get("AF_SECRET_KEY", "asil-forge-local-secret-key").encode("utf-8")
+EMAIL_RE = re.compile(r"^[^@\s]+@[^@\s]+\.[^@\s]+$")
+RATE_LIMITS: dict[tuple[str, str], list[float]] = {}
 ADMIN_EMAIL = os.environ.get("ASIL_FORGE_ADMIN_EMAIL", "admin@asilforge.local").strip()
 ADMIN_PASSWORD = os.environ.get("ASIL_FORGE_ADMIN_PASSWORD", "").strip()
 
