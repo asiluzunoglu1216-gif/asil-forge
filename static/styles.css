@@ -99,16 +99,30 @@ button {
 }
 
 .brand-mark {
-  width: 48px;
-  height: 48px;
+  width: 52px;
+  height: 52px;
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  border-radius: 16px;
-  font-weight: 800;
-  letter-spacing: 0.08em;
-  background: linear-gradient(135deg, rgba(125, 211, 252, 0.18), rgba(96, 165, 250, 0.12));
-  border: 1px solid var(--line-strong);
+  padding: 10px;
+  border-radius: 18px;
+  background:
+    linear-gradient(180deg, rgba(10, 22, 40, 0.94), rgba(6, 14, 28, 0.98)),
+    linear-gradient(135deg, rgba(125, 211, 252, 0.18), rgba(96, 165, 250, 0.12));
+  border: 1px solid rgba(125, 211, 252, 0.22);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.04);
+  transition: transform 180ms ease, border-color 180ms ease;
+}
+
+.brand-mark img {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+.brand:hover .brand-mark {
+  transform: translateY(-1px);
+  border-color: rgba(125, 211, 252, 0.34);
 }
 
 .brand-copy {

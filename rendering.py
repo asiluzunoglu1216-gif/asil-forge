@@ -85,6 +85,7 @@ def shell_layout(
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>{e(title)} | Asil Forge</title>
+  <link rel="icon" type="image/svg+xml" href="/static/logo-mark.svg">
   <link rel="stylesheet" href="/static/styles.css">
 </head>
 <body>
@@ -92,7 +93,9 @@ def shell_layout(
     <header class="topbar">
       <div class="container topbar-inner">
         <a class="brand" href="/">
-          <span class="brand-mark">AF</span>
+          <span class="brand-mark" aria-hidden="true">
+            <img src="/static/logo-mark.svg" alt="">
+          </span>
           <span class="brand-copy">
             <strong>Asil Forge</strong>
             <small>{e(t(lang, "brand_tag"))}</small>

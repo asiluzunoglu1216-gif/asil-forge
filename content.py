@@ -269,6 +269,13 @@ SERVICES = [
 
 SHOWCASE_ITEMS = [
     {
+        "title": {"tr": "Asil Ofisi", "en": "Asil Office"},
+        "text": {
+            "tr": "Musteri taleplerini, dahili operasyonu ve yonetim akislarini tek premium arayuzde birlestiren dijital ofis platformu.",
+            "en": "A digital office platform that unifies client requests, internal operations, and management flows inside one premium interface.",
+        },
+    },
+    {
         "title": {"tr": "ClientOps Workspace", "en": "ClientOps Workspace"},
         "text": {
             "tr": "Musteri taleplerini, belgeleri ve durum guncellemelerini tek panelde toplayan sistem.",
