@@ -90,7 +90,7 @@ def shell_layout(
             "@type": "Organization",
             "name": "Asil Forge",
             "url": base_url.rstrip("/"),
-            "logo": f"{base_url.rstrip('/')}/static/logo-mark.svg",
+            "logo": f"{base_url.rstrip('/')}/static/logo-mark.png",
         }
     )
 
@@ -105,12 +105,12 @@ def shell_layout(
   <meta property="og:description" content="{e(description)}">
   <meta property="og:type" content="website">
   <meta property="og:url" content="{e(canonical_url)}">
-  <meta property="og:image" content="{e(base_url.rstrip('/'))}/static/logo-mark.svg">
+  <meta property="og:image" content="{e(base_url.rstrip('/'))}/static/logo-mark.png">
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:title" content="{e(title)} | Asil Forge">
   <meta name="twitter:description" content="{e(description)}">
   <link rel="canonical" href="{e(canonical_url)}">
-  <link rel="icon" type="image/svg+xml" href="/static/logo-mark.svg">
+  <link rel="icon" type="image/png" href="/static/logo-mark.png">
   <link rel="stylesheet" href="/static/styles.css">
   <script type="application/ld+json">{org_json}</script>
 </head>
@@ -120,7 +120,7 @@ def shell_layout(
       <div class="container topbar-inner">
         <a class="brand" href="/">
           <span class="brand-mark" aria-hidden="true">
-            <img src="/static/logo-mark.svg" alt="">
+            <img src="/static/logo-mark.png" alt="">
           </span>
           <span class="brand-copy">
             <strong>Asil Forge</strong>
