@@ -277,24 +277,11 @@ SHOWCASE_ITEMS = [
         },
     },
     {
-        "title": {"tr": "ClientOps Workspace", "en": "ClientOps Workspace"},
+        "title": {"tr": "AsilAI", "en": "AsilAI"},
+        "status": {"tr": "Yakinda", "en": "Coming soon"},
         "text": {
-            "tr": "Musteri taleplerini, belgeleri ve durum guncellemelerini tek panelde toplayan sistem.",
-            "en": "A workspace that centralizes client requests, files, and status updates in one place.",
-        },
-    },
-    {
-        "title": {"tr": "Forge Control Suite", "en": "Forge Control Suite"},
-        "text": {
-            "tr": "Proje talepleri, mesajlar ve teslim sureclerini tek merkezde toplayan kontrol deneyimi.",
-            "en": "A control experience that centralizes project requests, messages, and delivery workflows.",
-        },
-    },
-    {
-        "title": {"tr": "Automation Relay", "en": "Automation Relay"},
-        "text": {
-            "tr": "Formlar, durum degisiklikleri ve e-posta kuyrugunu birbirine baglayan arka plan akisi.",
-            "en": "A background flow connecting forms, status updates, and notification delivery.",
+            "tr": "Asil Forge ekosistemi icin yapay zeka destekli uretim, otomasyon ve karar destek deneyimi.",
+            "en": "An AI-powered creation, automation, and decision support experience for the Asil Forge ecosystem.",
         },
     },
 ]

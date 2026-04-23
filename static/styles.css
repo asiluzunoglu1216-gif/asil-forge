@@ -355,6 +355,19 @@ h1 {
   font-weight: 700;
 }
 
+.project-status-note {
+  display: inline-flex;
+  width: fit-content;
+  margin: 0 0 10px;
+  padding: 7px 11px;
+  border-radius: 999px;
+  border: 1px solid rgba(245, 158, 11, 0.24);
+  color: #ffd99a;
+  background: rgba(245, 158, 11, 0.08);
+  font-size: 0.86rem;
+  font-weight: 700;
+}
+
 .panel {
   background: var(--panel);
   border: 1px solid var(--line);

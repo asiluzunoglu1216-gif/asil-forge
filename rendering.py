@@ -182,7 +182,9 @@ def page_section(title: str, intro: str, inner: str, eyebrow: str = "") -> str:
 
 def render_project_card(item: dict, lang: str, *, with_tag: bool = False) -> str:
     tag = f'<span class="project-tag">{e(t(lang, "showcase_tag"))}</span>' if with_tag else ""
-    body = f'{tag}<h3>{e(item["title"][lang])}</h3><p>{e(item["text"][lang])}</p>'
+    status = item.get("status", {}).get(lang, "") if isinstance(item.get("status"), dict) else item.get("status", "")
+    status_html = f'<span class="project-status-note">{e(status)}</span>' if status else ""
+    body = f'{tag}<h3>{e(item["title"][lang])}</h3>{status_html}<p>{e(item["text"][lang])}</p>'
     href = item.get("url")
     if href:
         label = "Incele" if lang == "tr" else "View"
