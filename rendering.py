@@ -83,6 +83,7 @@ def shell_layout(
     )
 
     canonical_url = f"{base_url.rstrip('/')}{current_path}"
+    page_title = "Asil Forge" if title.strip().lower() == "asil forge" else f"{title} | Asil Forge"
     description = meta_description or "Asil Forge builds premium software systems, automation flows, and digital platforms for modern companies."
     org_json = json.dumps(
         {
@@ -99,18 +100,20 @@ def shell_layout(
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>{e(title)} | Asil Forge</title>
+  <title>{e(page_title)}</title>
   <meta name="description" content="{e(description)}">
-  <meta property="og:title" content="{e(title)} | Asil Forge">
+  <meta property="og:title" content="{e(page_title)}">
   <meta property="og:description" content="{e(description)}">
   <meta property="og:type" content="website">
   <meta property="og:url" content="{e(canonical_url)}">
   <meta property="og:image" content="{e(base_url.rstrip('/'))}/static/logo-mark.png">
   <meta name="twitter:card" content="summary_large_image">
-  <meta name="twitter:title" content="{e(title)} | Asil Forge">
+  <meta name="twitter:title" content="{e(page_title)}">
   <meta name="twitter:description" content="{e(description)}">
   <link rel="canonical" href="{e(canonical_url)}">
-  <link rel="icon" type="image/png" href="/static/logo-mark.png">
+  <link rel="icon" href="/favicon.ico" sizes="any">
+  <link rel="icon" type="image/png" sizes="96x96" href="/static/site-icon.png">
+  <link rel="apple-touch-icon" href="/static/logo-mark.png">
   <link rel="stylesheet" href="/static/styles.css">
   <script type="application/ld+json">{org_json}</script>
 </head>
@@ -240,7 +243,7 @@ def render_home(lang: str, user: dict | None, stats: dict[str, int]) -> str:
     )
     selected_work = page_section(
         t(lang, "section_showcase"),
-        t(lang, "admin_text"),
+        t(lang, "dashboard_text"),
         f'<div class="card-grid">{showcase}</div>',
         t(lang, "section_showcase"),
     )
@@ -251,8 +254,8 @@ def render_about(lang: str) -> str:
     inner = (
         '<div class="split-grid">'
         f'<article class="panel prose-card"><h3>{e(t(lang, "about_title"))}</h3><p>{e(t(lang, "about_text"))}</p>'
-        '<p>We treat the public-facing website as the trust layer, the dashboard as the client workspace, and the admin panel as the delivery engine.</p></article>'
-        '<article class="panel prose-card"><h3>System Thinking</h3><p>Professional software companies do not stop at visuals. They connect request intake, authentication, admin review, notifications, and delivery tracking into one system.</p></article>'
+        '<p>We treat the public-facing website as the trust layer, the client dashboard as the workspace, and the delivery flow as the operating system.</p></article>'
+        '<article class="panel prose-card"><h3>System Thinking</h3><p>Professional software companies do not stop at visuals. They connect request intake, authentication, notifications, and delivery tracking into one system.</p></article>'
         "</div>"
     )
     return page_section(t(lang, "about_title"), t(lang, "about_text"), inner, t(lang, "nav_about"))

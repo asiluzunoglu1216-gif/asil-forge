@@ -71,7 +71,8 @@ DB_DIR = Path("/tmp") if IS_VERCEL else DATA_DIR
 DB_PATH = DB_DIR / "asil_forge.db"
 HOST = os.environ.get("HOST", "0.0.0.0").strip() or "0.0.0.0"
 PORT = int(os.environ.get("PORT", "8000"))
-BASE_URL = os.environ.get("AF_BASE_URL") or (f"https://{os.environ['VERCEL_URL']}" if os.environ.get("VERCEL_URL") else f"http://127.0.0.1:{PORT}")
+DEFAULT_BASE_URL = "https://asilforge.com" if IS_VERCEL else f"http://127.0.0.1:{PORT}"
+BASE_URL = os.environ.get("AF_BASE_URL") or DEFAULT_BASE_URL
 SECRET_KEY = os.environ.get("AF_SECRET_KEY", "asil-forge-local-secret-key").encode("utf-8")
 EMAIL_RE = re.compile(r"^[^@\s]+@[^@\s]+\.[^@\s]+$")
 RATE_LIMITS: dict[tuple[str, str], list[float]] = {}
@@ -383,16 +384,16 @@ def public_stats(conn: sqlite3.Connection) -> dict[str, int]:
 def meta_description_for(path: str, lang: str) -> str:
     descriptions = {
         "/": {
-            "tr": "Asil Forge; premium yazilim gelistirme, otomasyon sistemleri, web platformlari ve admin panelleri sunan modern bir yazilim sirketidir.",
+            "tr": "Asil Forge; premium yazilim gelistirme, otomasyon sistemleri, web platformlari ve dijital cozumler sunan modern bir yazilim sirketidir.",
             "en": "Asil Forge is a premium software company focused on automation systems, web platforms, and modern digital operations.",
         },
         "/about": {
-            "tr": "Asil Forge hakkinda: dijital omurga, admin sistemleri ve kurumsal yazilim deneyimi.",
-            "en": "About Asil Forge: digital backbone, admin systems, and a structured software company experience.",
+            "tr": "Asil Forge hakkinda: dijital omurga, is akisi sistemleri ve kurumsal yazilim deneyimi.",
+            "en": "About Asil Forge: digital backbone, workflow systems, and a structured software company experience.",
         },
         "/services": {
-            "tr": "Kurumsal web platformlari, musteri panelleri, admin ekranlari ve otomasyon sistemleri.",
-            "en": "Corporate web platforms, client dashboards, admin tools, and automation systems.",
+            "tr": "Kurumsal web platformlari, musteri portallari, is akisi sistemleri ve otomasyon cozumleri.",
+            "en": "Corporate web platforms, client portals, workflow systems, and automation solutions.",
         },
         "/showcase": {
             "tr": "Asil Forge proje vitrini: Asil Ofisi, ClientOps Workspace ve digital product case study alanlari.",
@@ -554,6 +555,13 @@ class AsilForgeHandler(BaseHTTPRequestHandler):
             self.db.close()
 
     def handle_get(self) -> None:
+        if self.route_path == "/favicon.ico":
+            file_path = STATIC_DIR / "favicon.ico"
+            if file_path.exists():
+                self.send_bytes(file_path.read_bytes(), content_type="image/x-icon")
+            else:
+                self.send_error(404, "Not found")
+            return
         if self.route_path == "/robots.txt":
             self.send_bytes(robots_txt().encode("utf-8"), content_type="text/plain; charset=utf-8")
             return
