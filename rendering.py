@@ -95,6 +95,14 @@ def shell_layout(
             "logo": f"{base_url.rstrip('/')}/static/logo-mark.png",
         }
     )
+    website_json = json.dumps(
+        {
+            "@context": "https://schema.org",
+            "@type": "WebSite",
+            "name": "Asil Forge",
+            "url": base_url.rstrip("/"),
+        }
+    )
 
     return f"""<!DOCTYPE html>
 <html lang="{e(lang)}">
@@ -106,6 +114,7 @@ def shell_layout(
   <meta property="og:title" content="{e(page_title)}">
   <meta property="og:description" content="{e(description)}">
   <meta property="og:type" content="website">
+  <meta property="og:site_name" content="Asil Forge">
   <meta property="og:url" content="{e(canonical_url)}">
   <meta property="og:image" content="{e(base_url.rstrip('/'))}/static/logo-mark.png">
   <meta name="twitter:card" content="summary_large_image">
@@ -117,6 +126,7 @@ def shell_layout(
   <link rel="apple-touch-icon" href="/static/logo-mark.png">
   <link rel="stylesheet" href="/static/styles.css">
   <script type="application/ld+json">{org_json}</script>
+  <script type="application/ld+json">{website_json}</script>
 </head>
 <body>
   <div class="app-shell">
