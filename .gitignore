@@ -1,3 +1,5 @@
 __pycache__/
 data/*.db
 .env.local
+static/downloads/*.exe
+!static/downloads/.gitkeep

@@ -76,6 +76,7 @@ Vercel Environment Variables:
 - `ASIL_FORGE_ADMIN_PASSWORD`
 - `AF_SECRET_KEY`
 - `AF_BASE_URL`
+- `ASIL_OFISI_DOWNLOAD_URL` (Asil Ofisi EXE dosyasi buyukse Vercel Blob veya benzeri depolama indirme linki)
 
 Ornek `AF_BASE_URL`:
 
@@ -84,6 +85,12 @@ AF_BASE_URL=https://asil-forge.vercel.app
 ```
 
 Not: Vercel ortami kalici yerel SQLite depolamasi icin uygun degildir. Bu repo Vercel'de demo / hafif kullanim icin gecici `/tmp` veritabani ile acilir. Gercek uretim kullaniminda harici bir veritabani kullanilmalidir.
+
+## Asil Ofisi EXE Indirme
+
+Asil Ofisi sayfasi `/projects/asil-ofisi` adresindedir. Indirme butonu `/downloads/asil-ofisi.exe` rotasini kullanir.
+
+Yerelde test etmek icin kurulum dosyasini `static/downloads/asil-ofisi.exe` konumuna koyabilirsin. Bu klasordeki `.exe` dosyalari Git'e alinmaz; 500 MB civari uretim dosyalari icin `ASIL_OFISI_DOWNLOAD_URL` ortam degiskenine Vercel Blob veya baska depolama indirme linki eklenmelidir.
 
 ## Dosya Yapisi
 

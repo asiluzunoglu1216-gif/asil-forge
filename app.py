@@ -36,6 +36,7 @@ from rendering import (
     render_login,
     render_register,
     render_reset,
+    render_asil_ofisi,
     render_services,
     render_showcase,
     shell_layout,
@@ -78,7 +79,9 @@ EMAIL_RE = re.compile(r"^[^@\s]+@[^@\s]+\.[^@\s]+$")
 RATE_LIMITS: dict[tuple[str, str], list[float]] = {}
 ADMIN_EMAIL = os.environ.get("ASIL_FORGE_ADMIN_EMAIL", "admin@asilforge.local").strip()
 ADMIN_PASSWORD = os.environ.get("ASIL_FORGE_ADMIN_PASSWORD", "").strip()
-PUBLIC_ROUTES = ["/", "/about", "/services", "/showcase", "/contact"]
+ASIL_OFISI_EXE_PATH = STATIC_DIR / "downloads" / "asil-ofisi.exe"
+ASIL_OFISI_DOWNLOAD_URL = os.environ.get("ASIL_OFISI_DOWNLOAD_URL", "").strip()
+PUBLIC_ROUTES = ["/", "/about", "/services", "/showcase", "/projects/asil-ofisi", "/contact"]
 
 
 def now_utc() -> datetime:
@@ -399,6 +402,10 @@ def meta_description_for(path: str, lang: str) -> str:
             "tr": "Asil Forge proje vitrini: Asil Ofisi, ClientOps Workspace ve digital product case study alanlari.",
             "en": "Asil Forge showcase: Asil Office, ClientOps Workspace, and digital product case studies.",
         },
+        "/projects/asil-ofisi": {
+            "tr": "Asil Ofisi; operasyon, dosya, gorev ve ekip akisini tek profesyonel masaustu deneyiminde birlestiren Asil Forge urunudur.",
+            "en": "Asil Office is an Asil Forge product that unifies operations, files, tasks, and team workflow in one professional desktop experience.",
+        },
         "/contact": {
             "tr": "Asil Forge ile iletisime gecin ve yazilim projeniz icin yapilandirilmis talep olusturun.",
             "en": "Contact Asil Forge and start a structured request for your software project.",
@@ -568,6 +575,9 @@ class AsilForgeHandler(BaseHTTPRequestHandler):
         if self.route_path == "/sitemap.xml":
             self.send_bytes(sitemap_xml().encode("utf-8"), content_type="application/xml; charset=utf-8")
             return
+        if self.route_path == "/downloads/asil-ofisi.exe":
+            self.download_asil_ofisi()
+            return
         if self.route_path == "/":
             self.render_page("Asil Forge", render_home(self.lang, self.user, public_stats(self.db)), "/")
             return
@@ -579,6 +589,10 @@ class AsilForgeHandler(BaseHTTPRequestHandler):
             return
         if self.route_path == "/showcase":
             self.render_page(t(self.lang, "nav_work"), render_showcase(self.lang, get_blog_posts(self.db)), "/showcase")
+            return
+        if self.route_path == "/projects/asil-ofisi":
+            download_ready = ASIL_OFISI_EXE_PATH.exists() or bool(ASIL_OFISI_DOWNLOAD_URL)
+            self.render_page("Asil Ofisi", render_asil_ofisi(self.lang, download_ready), "/projects/asil-ofisi")
             return
         if self.route_path == "/contact":
             self.render_page(t(self.lang, "nav_contact"), render_contact(self.lang, self.csrf_token, build_captcha(self.lang)), "/contact")
@@ -985,6 +999,24 @@ class AsilForgeHandler(BaseHTTPRequestHandler):
         mime_type = mimetypes.guess_type(str(file_path))[0] or "application/octet-stream"
         self.send_bytes(file_path.read_bytes(), content_type=mime_type)
 
+    def download_asil_ofisi(self) -> None:
+        if ASIL_OFISI_DOWNLOAD_URL:
+            self.redirect(ASIL_OFISI_DOWNLOAD_URL)
+            return
+        if not ASIL_OFISI_EXE_PATH.exists():
+            message = (
+                "Asil Ofisi indirme dosyasi henuz baglanmadi."
+                if self.lang == "tr"
+                else "The Asil Office download file has not been connected yet."
+            )
+            self.redirect(redirect_with_flash("/projects/asil-ofisi", message, "info"))
+            return
+        self.send_file_download(
+            ASIL_OFISI_EXE_PATH,
+            filename="Asil-Ofisi-Setup.exe",
+            content_type="application/octet-stream",
+        )
+
     def set_cookie(self, name: str, value: str, *, max_age: int, http_only: bool = False) -> None:
         jar = cookies.SimpleCookie()
         jar[name] = value
@@ -1015,6 +1047,22 @@ class AsilForgeHandler(BaseHTTPRequestHandler):
             self.send_header("Set-Cookie", item)
         self.end_headers()
         self.wfile.write(payload)
+
+    def send_file_download(self, file_path: Path, *, filename: str, content_type: str) -> None:
+        self.send_response(200)
+        self.send_header("Content-Type", content_type)
+        self.send_header("Content-Length", str(file_path.stat().st_size))
+        self.send_header("Content-Disposition", f'attachment; filename="{filename}"')
+        self.send_header("Cache-Control", "private, no-store")
+        for item in self.pending_cookies:
+            self.send_header("Set-Cookie", item)
+        self.end_headers()
+        with file_path.open("rb") as download_file:
+            while True:
+                chunk = download_file.read(1024 * 1024)
+                if not chunk:
+                    break
+                self.wfile.write(chunk)
 
     def redirect(self, location: str) -> None:
         self.send_response(303)

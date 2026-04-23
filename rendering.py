@@ -74,11 +74,12 @@ def shell_layout(
       auth_links.append(f'<a href="/login">{e(t(lang, "nav_login"))}</a>')
       auth_links.append(f'<a href="/register" class="btn btn-primary btn-small">{e(t(lang, "nav_register"))}</a>')
 
+    work_active = current_path == "/showcase" or current_path.startswith("/projects/")
     nav = (
         f'<a href="/"{" class=\"active\"" if current_path == "/" else ""}>{e(t(lang, "nav_home"))}</a>'
         f'<a href="/about"{" class=\"active\"" if current_path == "/about" else ""}>{e(t(lang, "nav_about"))}</a>'
         f'<a href="/services"{" class=\"active\"" if current_path == "/services" else ""}>{e(t(lang, "nav_services"))}</a>'
-        f'<a href="/showcase"{" class=\"active\"" if current_path == "/showcase" else ""}>{e(t(lang, "nav_work"))}</a>'
+        f'<a href="/showcase"{" class=\"active\"" if work_active else ""}>{e(t(lang, "nav_work"))}</a>'
         f'<a href="/contact"{" class=\"active\"" if current_path == "/contact" else ""}>{e(t(lang, "nav_contact"))}</a>'
     )
 
@@ -179,6 +180,16 @@ def page_section(title: str, intro: str, inner: str, eyebrow: str = "") -> str:
     )
 
 
+def render_project_card(item: dict, lang: str, *, with_tag: bool = False) -> str:
+    tag = f'<span class="project-tag">{e(t(lang, "showcase_tag"))}</span>' if with_tag else ""
+    body = f'{tag}<h3>{e(item["title"][lang])}</h3><p>{e(item["text"][lang])}</p>'
+    href = item.get("url")
+    if href:
+        label = "Incele" if lang == "tr" else "View"
+        return f'<a class="panel project-card project-card-link" href="{e(href)}">{body}<span class="project-arrow">{e(label)}</span></a>'
+    return f'<article class="panel project-card">{body}</article>'
+
+
 def render_home(lang: str, user: dict | None, stats: dict[str, int]) -> str:
     stats_html = (
         '<div class="stats-grid">'
@@ -191,10 +202,7 @@ def render_home(lang: str, user: dict | None, stats: dict[str, int]) -> str:
         f'<article class="panel feature-card"><h3>{e(item["title"][lang])}</h3><p>{e(item["text"][lang])}</p></article>'
         for item in SERVICES
     )
-    showcase = "".join(
-        f'<article class="panel project-card"><span class="project-tag">{e(t(lang, "showcase_tag"))}</span><h3>{e(item["title"][lang])}</h3><p>{e(item["text"][lang])}</p></article>'
-        for item in SHOWCASE_ITEMS
-    )
+    showcase = "".join(render_project_card(item, lang, with_tag=True) for item in SHOWCASE_ITEMS)
     primary_link = "/dashboard" if user else "/register"
     hero = f"""
     <section class="hero">
@@ -270,10 +278,7 @@ def render_services(lang: str) -> str:
 
 
 def render_showcase(lang: str, blog_posts: list[dict]) -> str:
-    items = "".join(
-        f'<article class="panel project-card"><h3>{e(item["title"][lang])}</h3><p>{e(item["text"][lang])}</p></article>'
-        for item in SHOWCASE_ITEMS
-    )
+    items = "".join(render_project_card(item, lang) for item in SHOWCASE_ITEMS)
     insights = "".join(
         f'<article class="panel feature-card"><h3>{e(post["title"])}</h3><p>{e(post["excerpt"])}</p></article>'
         for post in blog_posts
@@ -282,6 +287,123 @@ def render_showcase(lang: str, blog_posts: list[dict]) -> str:
         page_section(t(lang, "section_showcase"), t(lang, "dashboard_text"), f'<div class="card-grid">{items}</div>', t(lang, "section_showcase"))
         + page_section(t(lang, "section_insights"), "Product thinking and delivery logic.", f'<div class="card-grid">{insights}</div>', t(lang, "section_insights"))
     )
+
+
+def render_asil_ofisi(lang: str, download_ready: bool) -> str:
+    if lang == "tr":
+        copy = {
+            "eyebrow": "Asil Forge urunu",
+            "title": "Asil Ofisi",
+            "lead": "Operasyon, dosya, gorev ve ekip akisini tek karanlik, hizli ve profesyonel masaustu deneyiminde toplamak icin tasarlanan dijital ofis.",
+            "primary": "Asil Ofisi EXE Indir",
+            "secondary": "Proje Detaylarini Incele",
+            "status_ready": "Indirme hazir. Butona basinca dosya bu site uzerinden iner.",
+            "status_waiting": "Indirme dosyasi henuz baglanmadi. Dosya eklenince ayni buton direkt indirme baslatacak.",
+            "download_title": "Windows kurulum dosyasi",
+            "download_text": "Tek tikla indirme akisi. Kullaniciyi baska bir sayfaya tasimadan kurulum dosyasina ulastirmak icin hazirlandi.",
+            "size_note": "500 MB civari surumlerde dosyayi GitHub yerine depolama alanina koymak gerekir.",
+            "feature_1": "Tek merkez operasyon",
+            "feature_1_text": "Gorev, dosya, not ve ekip akislari sade bir kontrol yuzeyinde birlesir.",
+            "feature_2": "Premium karanlik arayuz",
+            "feature_2_text": "Koyu tema, keskin kartlar ve yazilim odakli panel duzeniyle ciddi bir urun hissi verir.",
+            "feature_3": "Masaustu indirme",
+            "feature_3_text": "EXE paketi icin hazir rota, surum yayinlandiginda direkt indirme deneyimi sunar.",
+            "preview_title": "Urun deneyimi",
+            "preview_1": "Akilli proje ve is takibi",
+            "preview_2": "Dosya ve not alanlari",
+            "preview_3": "Yerel masaustu kullanimi",
+            "preview_4": "Gelecek surumlere hazir indirme altyapisi",
+        }
+    else:
+        copy = {
+            "eyebrow": "Asil Forge product",
+            "title": "Asil Office",
+            "lead": "A dark, fast, professional desktop experience designed to organize operations, files, tasks, and team flow in one digital office.",
+            "primary": "Download Asil Office EXE",
+            "secondary": "View Product Details",
+            "status_ready": "Download is ready. The file starts from this site when you press the button.",
+            "status_waiting": "The download file is not connected yet. Once added, the same button will start the download directly.",
+            "download_title": "Windows installer",
+            "download_text": "A one-click download flow built to deliver the installer without sending users through another page.",
+            "size_note": "For versions around 500 MB, the file should live in object storage instead of GitHub.",
+            "feature_1": "Central operations",
+            "feature_1_text": "Tasks, files, notes, and team workflows come together in one clean control surface.",
+            "feature_2": "Premium dark interface",
+            "feature_2_text": "Dark theme, sharp cards, and software-focused panels create a serious product feel.",
+            "feature_3": "Desktop download",
+            "feature_3_text": "The EXE route is ready to deliver a direct download experience when the release is published.",
+            "preview_title": "Product experience",
+            "preview_1": "Smart project and task tracking",
+            "preview_2": "File and note spaces",
+            "preview_3": "Local desktop usage",
+            "preview_4": "Download infrastructure ready for future releases",
+        }
+    status_class = "download-ready" if download_ready else "download-waiting"
+    status_text = copy["status_ready"] if download_ready else copy["status_waiting"]
+    return f"""
+    <section class="product-hero">
+      <div class="container product-hero-grid">
+        <div class="product-copy">
+          <span class="eyebrow">{e(copy["eyebrow"])}</span>
+          <h1>{e(copy["title"])}</h1>
+          <p>{e(copy["lead"])}</p>
+          <div class="hero-actions">
+            <a class="btn btn-primary" href="/downloads/asil-ofisi.exe" download>{e(copy["primary"])}</a>
+            <a class="btn btn-secondary" href="#details">{e(copy["secondary"])}</a>
+          </div>
+          <div class="product-status {status_class}">{e(status_text)}</div>
+        </div>
+        <div class="panel product-preview">
+          <div class="product-window-bar">
+            <span></span><span></span><span></span>
+            <strong>Asil Ofisi</strong>
+          </div>
+          <div class="product-window-body">
+            <div class="product-sidebar">
+              <span>Dashboard</span>
+              <span>Projects</span>
+              <span>Files</span>
+              <span>Notes</span>
+            </div>
+            <div class="product-canvas">
+              <div class="product-metric"><small>Open Tasks</small><strong>24</strong></div>
+              <div class="product-metric"><small>Files</small><strong>128</strong></div>
+              <div class="product-line wide"></div>
+              <div class="product-line"></div>
+              <div class="product-line short"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+    <section class="page-section" id="details">
+      <div class="container product-shell">
+        <div class="card-grid">
+          <article class="panel feature-card"><h3>{e(copy["feature_1"])}</h3><p>{e(copy["feature_1_text"])}</p></article>
+          <article class="panel feature-card"><h3>{e(copy["feature_2"])}</h3><p>{e(copy["feature_2_text"])}</p></article>
+          <article class="panel feature-card"><h3>{e(copy["feature_3"])}</h3><p>{e(copy["feature_3_text"])}</p></article>
+        </div>
+        <div class="download-grid">
+          <article class="panel download-panel">
+            <span class="project-tag">EXE</span>
+            <h2>{e(copy["download_title"])}</h2>
+            <p>{e(copy["download_text"])}</p>
+            <a class="btn btn-primary" href="/downloads/asil-ofisi.exe" download>{e(copy["primary"])}</a>
+            <p class="muted-note">{e(copy["size_note"])}</p>
+          </article>
+          <article class="panel product-list-card">
+            <h2>{e(copy["preview_title"])}</h2>
+            <div class="product-checks">
+              <span>{e(copy["preview_1"])}</span>
+              <span>{e(copy["preview_2"])}</span>
+              <span>{e(copy["preview_3"])}</span>
+              <span>{e(copy["preview_4"])}</span>
+            </div>
+          </article>
+        </div>
+      </div>
+    </section>
+    """
 
 
 def render_contact(lang: str, csrf_token: str, captcha: dict[str, str]) -> str:
