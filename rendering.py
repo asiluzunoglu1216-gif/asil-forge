@@ -342,6 +342,11 @@ def render_asil_ofisi(lang: str, download_ready: bool) -> str:
         }
     status_class = "download-ready" if download_ready else "download-waiting"
     status_text = copy["status_ready"] if download_ready else copy["status_waiting"]
+    download_cta = (
+        f'<a class="btn btn-primary" href="/downloads/asil-ofisi.exe" download>{e(copy["primary"])}</a>'
+        if download_ready
+        else f'<button class="btn btn-primary btn-disabled" type="button" disabled>{e(copy["primary"])}</button>'
+    )
     return f"""
     <section class="product-hero">
       <div class="container product-hero-grid">
@@ -350,7 +355,7 @@ def render_asil_ofisi(lang: str, download_ready: bool) -> str:
           <h1>{e(copy["title"])}</h1>
           <p>{e(copy["lead"])}</p>
           <div class="hero-actions">
-            <a class="btn btn-primary" href="/downloads/asil-ofisi.exe" download>{e(copy["primary"])}</a>
+            {download_cta}
             <a class="btn btn-secondary" href="#details">{e(copy["secondary"])}</a>
           </div>
           <div class="product-status {status_class}">{e(status_text)}</div>
@@ -390,7 +395,7 @@ def render_asil_ofisi(lang: str, download_ready: bool) -> str:
             <span class="project-tag">EXE</span>
             <h2>{e(copy["download_title"])}</h2>
             <p>{e(copy["download_text"])}</p>
-            <a class="btn btn-primary" href="/downloads/asil-ofisi.exe" download>{e(copy["primary"])}</a>
+            {download_cta}
             <p class="muted-note">{e(copy["size_note"])}</p>
           </article>
           <article class="panel product-list-card">
